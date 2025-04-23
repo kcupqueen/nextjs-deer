@@ -8,20 +8,27 @@ interface FormData {
     desireIntensity: number;
     hasImportantActivity: string;
     age: number;
+    spermColor: string;
 }
 
 
 const calculateProb = (formData: FormData) => {
-    const { daysWithout, desireIntensity, hasImportantActivity, age } = formData;
+    const { daysWithout, desireIntensity, hasImportantActivity, age, spermColor } = formData;
     let prob = 0.5;
-    if (age < 25) {
+    if (age <= 25) {
         prob = 0.6
-    } else if (age > 25 && age < 35) {
+    } else if (age > 25 && age <= 35) {
         prob = 0.5
-    } else if (age > 35 && age < 40) {
+    } else if (age > 35 && age <= 40) {
         prob = 0.4
-    } else {
+    } else if (age > 40 && age <= 50) {
         prob = 0.3
+    } else if (age > 50 && age <= 60) {
+        prob = 0.2
+    } else if (age > 60 && age <= 70) {
+        prob = 0.1
+    } else {
+        prob = 0.05
     }
 
 
@@ -48,6 +55,19 @@ const calculateProb = (formData: FormData) => {
         prob *= 1.1;
     } else {
         prob *= 0.9;
+    }
+    
+    // Factor in sperm color
+    if (spermColor === "yellow") {
+        prob *= 1; // Slight decrease for yellow
+    } else if (spermColor === "red") {
+        prob *= 0.1; // Larger decrease for red - potential health concern
+    } else if (spermColor === "green") {
+        prob *= 0.2; // Decrease for green
+    } else if (spermColor === "clear") {
+        prob *= 1.1; // Slight increase for clear
+    } else if (spermColor === "white") {
+        prob *= 1;
     }
 
     prob = Math.round(prob * 100) / 100;
@@ -114,7 +134,8 @@ export default function Home() {
         daysWithout: 0,
         desireIntensity: 0,
         hasImportantActivity: "no",
-        age: 18
+        age: 18,
+        spermColor: "white"
     });
 
     const [prob, setProb] = useState<number>(0.5);
@@ -164,9 +185,26 @@ export default function Home() {
                 ) : (
                     <form onSubmit={handleSubmit} className="w-full space-y-6 bg-white shadow-md rounded-lg p-6">
                         <div className="space-y-2">
-                            <label htmlFor="age" className="block text-sm font-medium text-gray-700">
-                                Age
-                            </label>
+                            <div className="flex justify-between items-center">
+                                <label htmlFor="age" className="text-sm font-medium text-gray-700">
+                                    Age
+                                </label>
+                                <span className="text-lg font-medium">
+                                    {formData.age} years - {(() => {
+                                        if (formData.age >= 18 && formData.age <= 30) {
+                                            return "精力充沛 💪";
+                                        } else if (formData.age > 30 && formData.age <= 45) {
+                                            return "中年牛马 😎";
+                                        } else if (formData.age > 45 && formData.age <= 60) {
+                                            return "经验丰富 👍";
+                                        } else if (formData.age > 60 && formData.age <= 75) {
+                                            return "稳重持久 😉";
+                                        } else {
+                                            return "养精蓄锐 😴";
+                                        }
+                                    })()}
+                                </span>
+                            </div>
                             <input
                                 type="number"
                                 id="age"
@@ -180,9 +218,26 @@ export default function Home() {
                         </div>
 
                         <div className="space-y-2">
-                            <label htmlFor="daysWithout" className="block text-sm font-medium text-gray-700">
-                                Days without 🦌
-                            </label>
+                            <div className="flex justify-between items-center">
+                                <label htmlFor="daysWithout" className="text-sm font-medium text-gray-700">
+                                    Days without 🦌
+                                </label>
+                                <span className="text-lg font-medium">
+                                    {formData.daysWithout} days - {(() => {
+                                        if (formData.daysWithout >= 0 && formData.daysWithout <= 3) {
+                                            return "刚刚释放 😌";
+                                        } else if (formData.daysWithout > 3 && formData.daysWithout <= 7) {
+                                            return "蓄势待发 🔋";
+                                        } else if (formData.daysWithout > 7 && formData.daysWithout <= 14) {
+                                            return "压力山大 😰";
+                                        } else if (formData.daysWithout > 14 && formData.daysWithout <= 30) {
+                                            return "即将爆发 🌋";
+                                        } else {
+                                            return "危险状态 ⚠️";
+                                        }
+                                    })()}
+                                </span>
+                            </div>
                             <input
                                 type="number"
                                 id="daysWithout"
@@ -195,9 +250,23 @@ export default function Home() {
                         </div>
 
                         <div className="space-y-2">
-                            <label htmlFor="desireIntensity" className="block text-sm font-medium text-gray-700">
-                                Sexual Desire Intensity (0-5)
-                            </label>
+                            <div className="flex justify-between items-center">
+                                <label htmlFor="desireIntensity" className="text-sm font-medium text-gray-700">
+                                    Sexual Desire Intensity (0-5)
+                                </label>
+                                <span className="text-lg font-medium">
+                                    {
+                                        [
+                                            "清新寡欲 😊", // 0
+                                            "心如止水 😌", // 1
+                                            "微起波澜 🤔", // 2
+                                            "蠢蠢欲动 😏", // 3
+                                            "干柴烈火 🔥", // 4
+                                            "浴火焚身 🥵"  // 5
+                                        ][formData.desireIntensity]
+                                    }
+                                </span>
+                            </div>
                             <input
                                 type="range"
                                 id="desireIntensity"
@@ -217,24 +286,16 @@ export default function Home() {
                                 <span>4</span>
                                 <span>5</span>
                             </div>
-                            <p className="text-center mt-2 text-lg font-medium">
-                                {
-                                    [
-                                        "清新寡欲 😊", // 0
-                                        "心如止水 😌", // 1
-                                        "微起波澜 🤔", // 2
-                                        "蠢蠢欲动 😏", // 3
-                                        "干柴烈火 🔥", // 4
-                                        "浴火焚身 🥵"  // 5
-                                    ][formData.desireIntensity]
-                                }
-                            </p>
+                            
                         </div>
 
                         <div className="space-y-2">
-                            <label className="block text-sm font-medium text-gray-700">
-                                Have anything important today?
-                            </label>
+                            <div className="flex justify-between items-center">
+                                <label className="text-sm font-medium text-gray-700">
+                                    Have anything important today?
+                                </label>
+                                
+                            </div>
                             <div className="mt-2 space-y-2">
                                 <div className="flex items-center">
                                     <input
@@ -276,6 +337,93 @@ export default function Home() {
                                     />
                                     <label htmlFor="maybe" className="ml-3 block text-sm font-medium text-gray-700">
                                         Maybe
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <div className="flex justify-between items-center">
+                                <label className="text-sm font-medium text-gray-700">
+                                    Sperm Color
+                                </label>
+                                <span className="text-lg font-medium">
+                                    {formData.spermColor === "white" && "正常哦 继续吧"}
+                                    {formData.spermColor === "yellow" && "憋得有点久了"}
+                                    {formData.spermColor === "red" && "血精了我擦，住手吧"}
+                                    {formData.spermColor === "green" && "绿色的?查查去吧"}
+                                    {formData.spermColor === "clear" && "正常的不错"}
+                                </span>
+                            </div>
+                            <div className="mt-2 space-y-2">
+                                <div className="flex items-center">
+                                    <input
+                                        id="white"
+                                        name="spermColor"
+                                        type="radio"
+                                        value="white"
+                                        checked={formData.spermColor === "white"}
+                                        onChange={handleChange}
+                                        className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
+                                    />
+                                    <label htmlFor="white" className="ml-3 block text-sm font-medium text-gray-700">
+                                        White/Gray (Normal) ⚪
+                                    </label>
+                                </div>
+                                <div className="flex items-center">
+                                    <input
+                                        id="yellow"
+                                        name="spermColor"
+                                        type="radio"
+                                        value="yellow"
+                                        checked={formData.spermColor === "yellow"}
+                                        onChange={handleChange}
+                                        className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
+                                    />
+                                    <label htmlFor="yellow" className="ml-3 block text-sm font-medium text-gray-700">
+                                        Yellow 🟡
+                                    </label>
+                                </div>
+                                <div className="flex items-center">
+                                    <input
+                                        id="red"
+                                        name="spermColor"
+                                        type="radio"
+                                        value="red"
+                                        checked={formData.spermColor === "red"}
+                                        onChange={handleChange}
+                                        className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
+                                    />
+                                    <label htmlFor="red" className="ml-3 block text-sm font-medium text-gray-700">
+                                        Red/Pink 🔴
+                                    </label>
+                                </div>
+                                <div className="flex items-center">
+                                    <input
+                                        id="green"
+                                        name="spermColor"
+                                        type="radio"
+                                        value="green"
+                                        checked={formData.spermColor === "green"}
+                                        onChange={handleChange}
+                                        className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
+                                    />
+                                    <label htmlFor="green" className="ml-3 block text-sm font-medium text-gray-700">
+                                        Green 🟢
+                                    </label>
+                                </div>
+                                <div className="flex items-center">
+                                    <input
+                                        id="clear"
+                                        name="spermColor"
+                                        type="radio"
+                                        value="clear"
+                                        checked={formData.spermColor === "clear"}
+                                        onChange={handleChange}
+                                        className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
+                                    />
+                                    <label htmlFor="clear" className="ml-3 block text-sm font-medium text-gray-700">
+                                        Clear/Transparent 💧
                                     </label>
                                 </div>
                             </div>
