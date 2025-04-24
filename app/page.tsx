@@ -185,10 +185,9 @@ export default function Home() {
     };
 
     return (
-        <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+        <div className="grid grid-rows-[10px_1fr_20px] items-center justify-items-center min-h-screen p-4 pt-2 pb-20 gap-8 sm:p-12 sm:pt-4 font-[family-name:var(--font-geist-sans)]">
             <main className="flex flex-col gap-8 row-start-2 items-center w-full max-w-md">
                 <h1 className="text-3xl font-bold text-center mb-6">今天🦌不🦌?</h1>
-                <h2 className="text-lg font-semibold text-center mb-4">中签率{prob}</h2>
                 {isSuccess ? (
                     <ResultComponent prob={prob} />
                 ) : (
@@ -196,9 +195,9 @@ export default function Home() {
                         <div className="space-y-2">
                             <div className="flex justify-between items-center">
                                 <label htmlFor="age" className="text-sm font-medium text-gray-700">
-                                    Age
+                                    年龄
                                 </label>
-                                <span className="text-lg font-medium">
+                                <span className="text-sm font-medium text-gray-600">
                                     {formData.age} years - {(() => {
                                         if (formData.age >= 18 && formData.age <= 30) {
                                             return "精力充沛 💪";
@@ -229,9 +228,9 @@ export default function Home() {
                         <div className="space-y-2">
                             <div className="flex justify-between items-center">
                                 <label htmlFor="daysWithout" className="text-sm font-medium text-gray-700">
-                                    Days without 🦌
+                                    憋了几天没🦌?
                                 </label>
-                                <span className="text-lg font-medium">
+                                <span className="text-sm font-medium text-gray-600">
                                     {formData.daysWithout} days - {(() => {
                                         if (formData.daysWithout >= 0 && formData.daysWithout <= 3) {
                                             return "刚刚释放 😌";
@@ -261,9 +260,9 @@ export default function Home() {
                         <div className="space-y-2">
                             <div className="flex justify-between items-center">
                                 <label htmlFor="desireIntensity" className="text-sm font-medium text-gray-700">
-                                    Sexual Desire Intensity (0-5)
+                                    欲望强度
                                 </label>
-                                <span className="text-lg font-medium">
+                                <span className="text-sm font-medium text-gray-600">
                                     {
                                         [
                                             "清新寡欲 😊", // 0
@@ -301,7 +300,7 @@ export default function Home() {
                         <div className="space-y-2">
                             <div className="flex justify-between items-center">
                                 <label className="text-sm font-medium text-gray-700">
-                                    Have anything important today?
+                                    最近有没有什么重要活动？
                                 </label>
                                 
                             </div>
@@ -354,9 +353,9 @@ export default function Home() {
                         <div className="space-y-2">
                             <div className="flex justify-between items-center">
                                 <label className="text-sm font-medium text-gray-700">
-                                    Sperm Color
+                                    蝌蚪颜色
                                 </label>
-                                <span className="text-lg font-medium">
+                                <span className="text-sm font-medium text-gray-600">
                                     {formData.spermColor === "white" && "正常哦 继续吧"}
                                     {formData.spermColor === "yellow" && "憋得有点久了"}
                                     {formData.spermColor === "red" && "血精了我擦，住手吧"}
@@ -376,7 +375,7 @@ export default function Home() {
                                         className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
                                     />
                                     <label htmlFor="white" className="ml-3 block text-sm font-medium text-gray-700">
-                                        White/Gray (Normal) ⚪
+                                        白色/灰色 (正常) ⚪
                                     </label>
                                 </div>
                                 <div className="flex items-center">
@@ -390,7 +389,7 @@ export default function Home() {
                                         className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
                                     />
                                     <label htmlFor="yellow" className="ml-3 block text-sm font-medium text-gray-700">
-                                        Yellow 🟡
+                                        黄色 🟡
                                     </label>
                                 </div>
                                 <div className="flex items-center">
@@ -404,7 +403,7 @@ export default function Home() {
                                         className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
                                     />
                                     <label htmlFor="red" className="ml-3 block text-sm font-medium text-gray-700">
-                                        Red/Pink 🔴
+                                        红色/粉色 🔴
                                     </label>
                                 </div>
                                 <div className="flex items-center">
@@ -418,7 +417,7 @@ export default function Home() {
                                         className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
                                     />
                                     <label htmlFor="green" className="ml-3 block text-sm font-medium text-gray-700">
-                                        Green 🟢
+                                        绿色 🟢
                                     </label>
                                 </div>
                                 <div className="flex items-center">
@@ -432,7 +431,7 @@ export default function Home() {
                                         className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300"
                                     />
                                     <label htmlFor="clear" className="ml-3 block text-sm font-medium text-gray-700">
-                                        Clear/Transparent 💧
+                                        清澈透明 💧
                                     </label>
                                 </div>
                             </div>
@@ -443,7 +442,7 @@ export default function Home() {
                             disabled={isSubmitting}
                             className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${isSubmitting ? 'opacity-70 cursor-not-allowed' : ''}`}
                         >
-                            {isSubmitting ? 'Submitting...' : '今天🦌否?'}
+                            {isSubmitting ? 'Submitting...' : `今天🦌中签率${prob}, 提交后出结果`}
                         </button>
                     </form>
                 )}
