@@ -166,8 +166,17 @@ export default function Home() {
             await new Promise(resolve => setTimeout(resolve, 1000));
             console.log('Form submitted:', formData);
             setIsSuccess(true);
-
-
+            // post formData to api
+            const response = await fetch('/api/default', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            });
+            const data = await response.json();
+            console.log('API response:', data);
+            
         } catch (error) {
             console.error('Error submitting form:', error);
         } finally {
