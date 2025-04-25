@@ -9,6 +9,8 @@ interface FormData {
     hasImportantActivity: string;
     age: number;
     spermColor: string;
+    anonymousId: string;
+    date: Date;
 }
 
 
@@ -130,12 +132,45 @@ export default function Home() {
    
 
     const router = useRouter();
+    useEffect(() => {
+        // 1. Handle Anonymous ID
+        let anonymousId = localStorage.getItem('anonymousId');
+        if (!anonymousId) {
+            anonymousId = Date.now().toString(36) + Math.random().toString(36).substring(2);
+            localStorage.setItem('anonymousId', anonymousId);
+        }
+
+        // 2. Load existing form data
+        const formDataString = localStorage.getItem('formData');
+        let loadedData = {};
+        if (formDataString) {
+            try {
+                loadedData = JSON.parse(formDataString);
+            } catch (error) {
+                console.error("Failed to parse formData from localStorage", error);
+                // If parsing fails, start with defaults but keep the ID
+                localStorage.removeItem('formData'); // Clear corrupted data
+            }
+        }
+
+        // 3. Set combined state
+        setFormData(prevData => ({
+            ...prevData, // Start with default values from useState
+            ...loadedData, // Override with loaded data if available
+            anonymousId: anonymousId as string, // Ensure ID is set
+            date: new Date() // Always set the current date on load
+        }));
+
+    }, []);
+
     const [formData, setFormData] = useState<FormData>({
         daysWithout: 0,
         desireIntensity: 0,
         hasImportantActivity: "no",
         age: 18,
-        spermColor: "white"
+        spermColor: "white",
+        anonymousId: '', // Initialize with empty string
+        date: new Date() // Initialize with current date
     });
 
     const [prob, setProb] = useState<number>(0.5);
@@ -144,17 +179,25 @@ export default function Home() {
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value, type } = e.target as HTMLInputElement;
-        setFormData({
+
+        // 1. Calculate the new form data state
+        const updatedValue = type === 'number' ? parseInt(value) || 0 : value;
+        const newFormData = {
             ...formData,
-            [name]: type === 'number' ? parseInt(value) || 0 : value
-        });
-        // update prob
-        const newProb = calculateProb({
-            ...formData,
-            [name]: type === 'number' ? value || 0 : value
-        });
-        console.log("newProb", newProb);
+            [name]: updatedValue
+        };
+
+        // 2. Update the state
+        setFormData(newFormData);
+
+        // 3. Update probability using the new data
+        const newProb = calculateProb(newFormData);
+        console.log("form", JSON.stringify(newFormData)); // Log the new data
         setProb(newProb);
+
+        // 4. Save the *new* formData to localStorage
+        localStorage.setItem('formData', JSON.stringify(newFormData));
+        console.log('Form data saved to localStorage');
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
